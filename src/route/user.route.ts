@@ -54,6 +54,16 @@ export function createUserRoutes() {
 
   });
 
+  userRoutes.get("/users/:username", authMiddleware, async (c) => {
+    const username = c.req.param("username");
+    const result = await userService.getByUsername(username);
+
+    return c.json({
+      data: result
+    });
+
+  });
+
   return userRoutes;
 
 }

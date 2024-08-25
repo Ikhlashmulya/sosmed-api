@@ -92,6 +92,32 @@ Response Body (Failed) :
 }
 ```
 
+## Get User by username
+
+Endpoint : GET /api/users/{username}
+
+Headers :
+- Authorization: token
+
+Response Body (Success) :
+
+```json
+{
+  "data" : {
+    "username" : "johndoe",
+    "name" : "John Doe"
+  }
+}
+```
+
+Response Body (Failed) :
+
+```json
+{
+  "errors" : "user not found"
+}
+```
+
 ## Update User
 
 Endpoint : PATCH /api/users/current

@@ -133,6 +133,27 @@ describe("test user service", () => {
 
     expect(result.name).toBe(updateRequest.name);
   });
+
+  it("should successfully find user with username", async () => {
+    const user: User = {
+      username: "test",
+      password: "test",
+      name: "test"
+    }
+
+    prismaMock.user.findFirst.mockResolvedValue(user);
+
+    const result = await userService.getByUsername("test");
+    expect(result.name).toBe("test");
+    expect(result.username).toBe("test");
+    expect(prismaMock.user.findFirst).toHaveBeenCalledWith({ where: { username: "test" } });
+  });
+
+  it("should fail find user", async () => {
+    prismaMock.user.findFirst.mockResolvedValue(null);
+
+    expect(() => userService.getByUsername("test")).rejects.toThrow(HTTPException);
+  });
 });
 
 

@@ -286,3 +286,45 @@ describe("PATCH /api/users/current", () => {
 
   });
 });
+
+describe("GET /api/users/:username", () => {
+
+  beforeEach(async () => {
+    await UserTest.create();
+  });
+
+  afterEach(async () => {
+    await UserTest.delete();
+  });
+
+  it("should successfully find a user", async () => {
+    const token = await UserTest.getToken();
+
+    const result = await web.request("/api/users/test", {
+      method: "GET",
+      headers: new Headers({ "Content-Type": "Application/Json", "Authorization": `Bearer ${token}` })
+    });
+
+    const responseBody = await result.json();
+
+    expect(result.status).toBe(200);
+    expect(responseBody.data.username).toBe("test");
+    expect(responseBody.data.name).toBe("test");
+
+  });
+
+  it("should fail find a user cause user doesnt exist", async () => {
+    const token = await UserTest.getToken();
+
+    const result = await web.request("/api/users/wrongusername", {
+      method: "GET",
+      headers: new Headers({ "Content-Type": "Application/Json", "Authorization": `Bearer ${token}` })
+    });
+
+    const responseBody = await result.json();
+
+    expect(result.status).toBe(404);
+    expect(responseBody.errors).toBe("user not found");
+  });
+
+});

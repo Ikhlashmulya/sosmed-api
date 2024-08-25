@@ -5,6 +5,7 @@ import { PrismaClient, User } from "@prisma/client";
 import { HTTPException } from "hono/http-exception";
 import { compare, hash } from "bcrypt";
 import { sign } from "hono/jwt";
+import { throws } from "node:assert";
 
 export class UserService {
   constructor(
@@ -84,5 +85,19 @@ export class UserService {
       username: user.username,
       name: user.name
     }
+  }
+
+  async getByUsername(username: string): Promise<UserResponse> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        username: username
+      }
+    });
+
+    if (!user) {
+      throw new HTTPException(404, { message: "user not found" });
+    }
+
+    return toUserResponse(user);
   }
 }
