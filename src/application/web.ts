@@ -14,10 +14,16 @@ web.onError((err, c) => {
   } else if (err instanceof ZodError) {
     return c.json({
       errors: JSON.stringify(err.errors)
-    }, 400)
+    }, 400);
   } else {
     return c.json({
       errors: err.message
-    }, 500)
+    }, 500);
   }
-})
+});
+
+web.notFound((c) => {
+  return c.json({
+    errors: "endpoint not found"
+  }, 404)
+});
