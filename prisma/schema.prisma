@@ -17,6 +17,31 @@ model User {
   username String @id @db.VarChar(100)
   password String @db.VarChar(100)
   name     String @db.VarChar(100)
+  Post     Post[]
 
   @@map("users")
+}
+
+model Post {
+  id           Int       @id @default(autoincrement())
+  title        String    @db.VarChar(100)
+  content      String    @db.Text
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userUsername], references: [username])
+  userUsername String    @db.VarChar(100)
+  Comment      Comment[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+
+  @@map("comments")
 }
