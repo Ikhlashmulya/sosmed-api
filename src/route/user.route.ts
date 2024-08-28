@@ -22,7 +22,7 @@ export function createUserRoutes() {
     });
   });
 
-  userRoutes.post("/users/login", async (c) => {
+  userRoutes.post("/users/_login", async (c) => {
     const request = await c.req.json<LoginUserRequest>();
 
     const result = await userService.login(request);
@@ -32,7 +32,7 @@ export function createUserRoutes() {
     });
   });
 
-  userRoutes.patch("/users/current", authMiddleware, async (c) => {
+  userRoutes.patch("/users/_current", authMiddleware, async (c) => {
     const user = c.get("user");
 
     const request = await c.req.json<UpdateUserRequest>();
@@ -44,7 +44,7 @@ export function createUserRoutes() {
     });
   });
 
-  userRoutes.get("/users/current", authMiddleware, async (c) => {
+  userRoutes.get("/users/_current", authMiddleware, async (c) => {
     const user = c.get("user");
     const result = userService.get(user);
 

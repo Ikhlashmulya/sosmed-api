@@ -35,7 +35,7 @@ Response Body (Failed) :
 
 ## Login User
 
-Endpoint : POST /api/users/login
+Endpoint : POST /api/users/_login
 
 Request Body :
 
@@ -68,7 +68,7 @@ Response Body (Failed) :
 
 ## Get User
 
-Endpoint : GET /api/users/current
+Endpoint : GET /api/users/_current
 
 Headers :
 - Authorization: token
@@ -120,7 +120,7 @@ Response Body (Failed) :
 
 ## Update User
 
-Endpoint : PATCH /api/users/current
+Endpoint : PATCH /api/users/_current
 
 Headers :
 - Authorization: token

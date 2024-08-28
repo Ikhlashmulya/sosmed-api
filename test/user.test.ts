@@ -87,7 +87,7 @@ describe("POST /api/users", () => {
 });
 
 
-describe("POST /api/users/login", () => {
+describe("POST /api/users/_login", () => {
 
   beforeEach(async () => {
     await UserTest.create();
@@ -98,7 +98,7 @@ describe("POST /api/users/login", () => {
   });
 
   it("should successfully login", async () => {
-    const result = await web.request("/api/users/login", {
+    const result = await web.request("/api/users/_login", {
       method: "POST",
       headers: new Headers({ "Content-Type": "Application/Json" }),
       body: JSON.stringify({
@@ -116,7 +116,7 @@ describe("POST /api/users/login", () => {
   });
 
   it("should fail login with wrong username", async () => {
-    const result = await web.request("/api/users/login", {
+    const result = await web.request("/api/users/_login", {
       method: "POST",
       headers: new Headers({ "Content-Type": "Application/Json" }),
       body: JSON.stringify({
@@ -133,7 +133,7 @@ describe("POST /api/users/login", () => {
   });
 
   it("should fail login with wrong password", async () => {
-    const result = await web.request("/api/users/login", {
+    const result = await web.request("/api/users/_login", {
       method: "POST",
       headers: new Headers({ "Content-Type": "Application/Json" }),
       body: JSON.stringify({
@@ -150,7 +150,7 @@ describe("POST /api/users/login", () => {
   });
 
   it("should fail in validation for missing required fields", async () => {
-    const result = await web.request("/api/users/login", {
+    const result = await web.request("/api/users/_login", {
       method: "POST",
       headers: new Headers({ "Content-Type": "Application/Json" }),
       body: JSON.stringify({
@@ -167,7 +167,7 @@ describe("POST /api/users/login", () => {
 
 });
 
-describe("GET /api/users/current", () => {
+describe("GET /api/users/_current", () => {
 
   beforeEach(async () => {
     await UserTest.create();
@@ -180,7 +180,7 @@ describe("GET /api/users/current", () => {
   it("should successfully get current user", async () => {
     const token = await UserTest.getToken();
 
-    const result = await web.request("/api/users/current", {
+    const result = await web.request("/api/users/_current", {
       method: "GET",
       headers: new Headers({ "Content-Type": "Application/Json", "Authorization": `Bearer ${token}` }),
     });
@@ -192,7 +192,7 @@ describe("GET /api/users/current", () => {
   });
 
   it("should fail get current user cause token is empty", async () => {
-    const result = await web.request("/api/users/current", {
+    const result = await web.request("/api/users/_current", {
       method: "GET",
       headers: new Headers({ "Content-Type": "Application/Json" }),
     });
@@ -203,7 +203,7 @@ describe("GET /api/users/current", () => {
   });
 
   it("should fail get current user cause Authorization not Bearer token", async () => {
-    const result = await web.request("/api/users/current", {
+    const result = await web.request("/api/users/_current", {
       method: "GET",
       headers: new Headers({ "Content-Type": "Application/Json", "Authorization": "not bearerToken" }),
     });
@@ -214,7 +214,7 @@ describe("GET /api/users/current", () => {
   });
 
   it("should fail get current user cause token is invalid", async () => {
-    const result = await web.request("/api/users/current", {
+    const result = await web.request("/api/users/_current", {
       method: "GET",
       headers: new Headers({ "Content-Type": "Application/Json", "Authorization": "Bearer invalidToken" }),
     });
@@ -225,7 +225,7 @@ describe("GET /api/users/current", () => {
   });
 });
 
-describe("PATCH /api/users/current", () => {
+describe("PATCH /api/users/_current", () => {
 
   beforeEach(async () => {
     await UserTest.create();
@@ -238,7 +238,7 @@ describe("PATCH /api/users/current", () => {
   it("should successfully updated user name", async () => {
     const token = await UserTest.getToken();
 
-    const result = await web.request("/api/users/current", {
+    const result = await web.request("/api/users/_current", {
       method: "PATCH",
       headers: new Headers({ "Content-Type": "Application/Json", "Authorization": `Bearer ${token}` }),
       body: JSON.stringify({
@@ -259,7 +259,7 @@ describe("PATCH /api/users/current", () => {
   it("should successfully updated user pasword", async () => {
     const token = await UserTest.getToken();
 
-    let result = await web.request("/api/users/current", {
+    let result = await web.request("/api/users/_current", {
       method: "PATCH",
       headers: new Headers({ "Content-Type": "Application/Json", "Authorization": `Bearer ${token}` }),
       body: JSON.stringify({
@@ -269,7 +269,7 @@ describe("PATCH /api/users/current", () => {
 
     expect(result.status).toBe(200);
 
-    result = await web.request("/api/users/login", {
+    result = await web.request("/api/users/_login", {
       method: "POST",
       headers: new Headers({ "Content-Type": "Application/Json" }),
       body: JSON.stringify({
