@@ -1,11 +1,10 @@
 import { Validation } from "../validation/validation";
 import { LoginUserRequest, RegisterUserRequest, UpdateUserRequest, toUserResponse, UserResponse } from "../model/user.model";
-import { UserValidation } from "../validation/user_validation";
+import { UserValidation } from "../validation/user.validation";
 import { PrismaClient, User } from "@prisma/client";
 import { HTTPException } from "hono/http-exception";
 import { compare, hash } from "bcrypt";
 import { sign } from "hono/jwt";
-import { throws } from "node:assert";
 
 export class UserService {
   constructor(
