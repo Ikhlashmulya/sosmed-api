@@ -3,6 +3,7 @@ import { createUserRoutes } from "../route/user.route";
 import { HTTPException } from "hono/http-exception";
 import { ZodError } from "zod";
 import { User } from "@prisma/client";
+import { createPostRoutes } from "../route/post.route";
 
 export type HonoENV = {
   Variables: {
@@ -12,6 +13,7 @@ export type HonoENV = {
 
 export const app = new Hono();
 app.route("/api/users", createUserRoutes());
+app.route("/api/posts", createPostRoutes());
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {

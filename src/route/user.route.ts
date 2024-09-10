@@ -5,14 +5,14 @@ import {
   RegisterUserRequest,
   UpdateUserRequest,
 } from "../model/user.model";
-import { User } from "@prisma/client";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { HonoENV } from "../application/hono";
 
 export const createUserRoutes = () => {
   const userService = new UserService();
 
-  const userRoutes = new Hono<{ Variables: { user: User } }>();
-  userRoutes.post("/users", async (c) => {
+  const userRoutes = new Hono<HonoENV>();
+  userRoutes.post("/", async (c) => {
     const request = await c.req.json<RegisterUserRequest>();
 
     const result = await userService.register(request);
@@ -22,7 +22,7 @@ export const createUserRoutes = () => {
     });
   });
 
-  userRoutes.post("/users/_login", async (c) => {
+  userRoutes.post("/_login", async (c) => {
     const request = await c.req.json<LoginUserRequest>();
 
     const result = await userService.login(request);
@@ -32,7 +32,7 @@ export const createUserRoutes = () => {
     });
   });
 
-  userRoutes.patch("/users/_current", authMiddleware, async (c) => {
+  userRoutes.patch("/_current", authMiddleware, async (c) => {
     const user = c.get("user");
 
     const request = await c.req.json<UpdateUserRequest>();
@@ -44,7 +44,7 @@ export const createUserRoutes = () => {
     });
   });
 
-  userRoutes.get("/users/_current", authMiddleware, async (c) => {
+  userRoutes.get("/_current", authMiddleware, async (c) => {
     const user = c.get("user");
     const result = userService.get(user);
 
@@ -53,7 +53,7 @@ export const createUserRoutes = () => {
     });
   });
 
-  userRoutes.get("/users/:username", authMiddleware, async (c) => {
+  userRoutes.get("/:username", authMiddleware, async (c) => {
     const username = c.req.param("username");
     const result = await userService.getByUsername(username);
 

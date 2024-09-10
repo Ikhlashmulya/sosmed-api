@@ -1,4 +1,4 @@
-import { Post, PrismaClient, User } from "@prisma/client";
+import { Post, User } from "@prisma/client";
 import {
   CreatePostRequest,
   PostResponse,
@@ -8,11 +8,14 @@ import {
 import { Validation } from "../validation/validation";
 import { PostValidation } from "../validation/post.validation";
 import { HTTPException } from "hono/http-exception";
-import { prisma } from "../application/database";
+import { prisma } from "../application/prisma";
+import { logger } from "../application/winston";
 
 export class PostService {
   async create(user: User, request: CreatePostRequest): Promise<PostResponse> {
     const createRequest = Validation.validate(PostValidation.CREATE, request);
+
+    logger.debug(`create post : ${JSON.stringify(createRequest)}`);
 
     const post = await prisma.post.create({
       data: {
@@ -70,8 +73,16 @@ export class PostService {
     return post;
   }
 
-  async getById(user: User, postId: number): Promise<PostResponse> {
-    const post = await this.checkPostMustExists(user.username, postId);
+  async getById(postId: number): Promise<PostResponse> {
+    const post = await prisma.post.findFirst({
+      where: {
+        id: postId,
+      },
+    });
+
+    if (!post) {
+      throw new HTTPException(404, { message: "post is not found" });
+    }
 
     return toPostResponse(post);
   }

@@ -7,11 +7,11 @@ import {
   UserResponse,
 } from "../model/user.model";
 import { UserValidation } from "../validation/user.validation";
-import { PrismaClient, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { HTTPException } from "hono/http-exception";
 import { compare, hash } from "bcrypt";
 import { sign } from "hono/jwt";
-import { prisma } from "../application/database";
+import { prisma } from "../application/prisma";
 
 export class UserService {
   async register(request: RegisterUserRequest): Promise<UserResponse> {
