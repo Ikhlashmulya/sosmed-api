@@ -33,6 +33,8 @@ describe("POST /api/posts", () => {
 
     expect(responseBody.data.title).toBe("test judul");
     expect(responseBody.data.content).toBe("test isi content");
+    expect(responseBody.data.createdAt).toBeDefined();
+    expect(responseBody.data.updatedAt).toBeDefined();
 
     logger.debug(`result json : ${JSON.stringify(responseBody)}`);
   });
@@ -94,6 +96,8 @@ describe("PUT /api/posts/:postId", () => {
     expect(responseBody.data.title).not.toBe(post.title);
     expect(responseBody.data.content).toBe("test edit content");
     expect(responseBody.data.content).not.toBe(post.content);
+    expect(responseBody.data.createdAt).toBeDefined();
+    expect(responseBody.data.updatedAt).toBeDefined();
 
     logger.debug(`result json : ${JSON.stringify(responseBody)}`);
   });
@@ -151,6 +155,8 @@ describe("GET /api/posts/:postId", () => {
 
     expect(responseBody.data.title).toBe(post.title);
     expect(responseBody.data.content).toBe(post.content);
+    expect(responseBody.data.createdAt).toBeDefined();
+    expect(responseBody.data.updatedAt).toBeDefined();
 
     logger.debug(`result json : ${JSON.stringify(responseBody)}`);
   });
