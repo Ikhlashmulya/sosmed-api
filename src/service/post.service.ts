@@ -1,6 +1,7 @@
 import { Post, User } from "@prisma/client";
 import {
   CreatePostRequest,
+  FindPostByUsernameRequest,
   PostResponse,
   toPostResponse,
   UpdatePostRequest,
@@ -85,5 +86,34 @@ export class PostService {
     }
 
     return toPostResponse(post);
+  }
+
+  async findPostByUsername(
+    request: FindPostByUsernameRequest,
+  ): Promise<PostResponse[]> {
+    const findByUsernameRequest = Validation.validate(
+      PostValidation.FINDBYUSERNAME,
+      request,
+    );
+
+    const countUser = await prisma.user.count({
+      where: {
+        username: findByUsernameRequest.username,
+      },
+    });
+
+    if (countUser == 0) {
+      throw new HTTPException(404, { message: "user is not found" });
+    }
+
+    const posts = await prisma.post.findMany({
+      where: {
+        userUsername: findByUsernameRequest.username,
+      },
+      take: findByUsernameRequest.size,
+      skip: (findByUsernameRequest.page - 1) * findByUsernameRequest.size,
+    });
+
+    return posts.map((post) => toPostResponse(post));
   }
 }

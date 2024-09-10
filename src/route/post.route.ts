@@ -5,10 +5,8 @@ import { HonoENV } from "../application/hono";
 import { CreatePostRequest, UpdatePostRequest } from "../model/post.model";
 import { logger } from "../application/winston";
 
-export const createPostRoutes = () => {
+export const createPostRoutes = (postService: PostService) => {
   const postRoutes = new Hono<HonoENV>();
-
-  const postService = new PostService();
 
   postRoutes.post("/", authMiddleware, async (c) => {
     const user = c.get("user");

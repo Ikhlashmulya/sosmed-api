@@ -7,10 +7,14 @@ import {
 } from "../model/user.model";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { HonoENV } from "../application/hono";
+import { PostService } from "../service/post.service";
+import { FindPostByUsernameRequest } from "../model/post.model";
+import { logger } from "../application/winston";
 
-export const createUserRoutes = () => {
-  const userService = new UserService();
-
+export const createUserRoutes = (
+  userService: UserService,
+  postService: PostService,
+) => {
   const userRoutes = new Hono<HonoENV>();
   userRoutes.post("/", async (c) => {
     const request = await c.req.json<RegisterUserRequest>();
@@ -59,6 +63,27 @@ export const createUserRoutes = () => {
 
     return c.json({
       data: result,
+    });
+  });
+
+  userRoutes.get("/:username/posts", authMiddleware, async (c) => {
+    const username = c.req.param("username");
+    const { size, page } = c.req.query();
+
+    const request: FindPostByUsernameRequest = {
+      username: username,
+      size: !size ? 10 : Number(size),
+      page: !page ? 1 : Number(page),
+    };
+
+    const result = await postService.findPostByUsername(request);
+
+    return c.json({
+      data: result,
+      paging: {
+        page: request.page,
+        size: request.size,
+      },
     });
   });
 

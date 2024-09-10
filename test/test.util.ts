@@ -48,4 +48,26 @@ export class PostTest {
       },
     });
   }
+
+  static async createManyPost() {
+    await prisma.post.createMany({
+      data: [
+        {
+          content: "test 1",
+          title: "test 1",
+          userUsername: "test",
+        },
+        {
+          content: "test 2",
+          title: "test 2",
+          userUsername: "test",
+        },
+        {
+          content: "test 3",
+          title: "test 3",
+          userUsername: "test",
+        },
+      ],
+    });
+  }
 }

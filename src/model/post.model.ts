@@ -20,6 +20,12 @@ export type PostResponse = {
   updatedAt: Date;
 };
 
+export type FindPostByUsernameRequest = {
+  username: string;
+  size: number;
+  page: number;
+};
+
 export function toPostResponse(post: Post): PostResponse {
   return {
     postId: post.id,

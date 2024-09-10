@@ -137,7 +137,7 @@ describe("GET /api/posts/:postId", () => {
     await UserTest.delete();
   });
 
-  it("should successfully update a post", async () => {
+  it("should successfully get a post", async () => {
     const token = await UserTest.getToken();
     const post = await PostTest.create();
 
@@ -216,6 +216,79 @@ describe("DELETE /api/posts/:postId", () => {
 
     const result = await app.request(`/api/posts/102131314`, {
       method: "DELETE",
+      headers: new Headers({
+        "Content-Type": "Application/Json",
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+
+    expect(result.status).toBe(404);
+
+    const responseBody = await result.json();
+    expect(responseBody.errors).toBeDefined();
+
+    logger.debug(`result json : ${JSON.stringify(responseBody)}`);
+  });
+});
+
+describe("GET /api/users/:username/posts", () => {
+  beforeEach(async () => {
+    await UserTest.create();
+    await PostTest.createManyPost();
+  });
+
+  afterEach(async () => {
+    await PostTest.deleteAll();
+    await UserTest.delete();
+  });
+
+  it("should successfully find posts by username", async () => {
+    const token = await UserTest.getToken();
+
+    const result = await app.request(`/api/users/test/posts`, {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "Application/Json",
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+
+    expect(result.status).toBe(200);
+
+    const responseBody = await result.json();
+    expect(responseBody.data).toBeDefined();
+    expect(responseBody.paging.size).toBe(10);
+    expect(responseBody.paging.page).toBe(1);
+
+    logger.debug(`result json : ${JSON.stringify(responseBody)}`);
+  });
+
+  it("should successfully find posts by username with paging query params", async () => {
+    const token = await UserTest.getToken();
+
+    const result = await app.request(`/api/users/test/posts?size=5&page=1`, {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "Application/Json",
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+
+    expect(result.status).toBe(200);
+
+    const responseBody = await result.json();
+    expect(responseBody.data).toBeDefined();
+    expect(responseBody.paging.size).toBe(5);
+    expect(responseBody.paging.page).toBe(1);
+
+    logger.debug(`result json : ${JSON.stringify(responseBody)}`);
+  });
+
+  it("should fail user not found", async () => {
+    const token = await UserTest.getToken();
+
+    const result = await app.request(`/api/users/wrongusername/posts`, {
+      method: "GET",
       headers: new Headers({
         "Content-Type": "Application/Json",
         Authorization: `Bearer ${token}`,
