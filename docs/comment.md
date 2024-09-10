@@ -126,7 +126,7 @@ Response Body (failed) :
 }
 ```
 
-## Get all Post
+## Get all Comment in post 
 
 Endpoint : GET /api/posts/{postId}/comments
 
