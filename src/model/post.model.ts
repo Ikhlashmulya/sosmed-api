@@ -26,6 +26,12 @@ export type FindPostByUsernameRequest = {
   page: number;
 };
 
+export type GetOrSearchPostsRequest = {
+  search?: string;
+  page: number;
+  size: number;
+};
+
 export function toPostResponse(post: Post): PostResponse {
   return {
     postId: post.id,

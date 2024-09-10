@@ -2,7 +2,11 @@ import { Hono } from "hono";
 import { PostService } from "../service/post.service";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { HonoENV } from "../application/hono";
-import { CreatePostRequest, UpdatePostRequest } from "../model/post.model";
+import {
+  CreatePostRequest,
+  GetOrSearchPostsRequest,
+  UpdatePostRequest,
+} from "../model/post.model";
 import { logger } from "../application/winston";
 
 export const createPostRoutes = (postService: PostService) => {
@@ -55,6 +59,26 @@ export const createPostRoutes = (postService: PostService) => {
 
     return c.json({
       data: result,
+    });
+  });
+
+  postRoutes.get("/", authMiddleware, async (c) => {
+    const { search, page, size } = c.req.query();
+
+    const request: GetOrSearchPostsRequest = {
+      search: search,
+      page: !page ? 1 : Number(page),
+      size: !size ? 10 : Number(size),
+    };
+
+    const result = await postService.getOrSearchPosts(request);
+
+    return c.json({
+      data: result,
+      paging: {
+        page: request.page,
+        size: request.size,
+      },
     });
   });
 

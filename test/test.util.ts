@@ -67,6 +67,11 @@ export class PostTest {
           title: "test 3",
           userUsername: "test",
         },
+        {
+          content: "isi content nya apa aja",
+          title: "apa aja",
+          userUsername: "test",
+        },
       ],
     });
   }

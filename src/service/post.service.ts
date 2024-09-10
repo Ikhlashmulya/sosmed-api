@@ -2,6 +2,7 @@ import { Post, User } from "@prisma/client";
 import {
   CreatePostRequest,
   FindPostByUsernameRequest,
+  GetOrSearchPostsRequest,
   PostResponse,
   toPostResponse,
   UpdatePostRequest,
@@ -92,7 +93,7 @@ export class PostService {
     request: FindPostByUsernameRequest,
   ): Promise<PostResponse[]> {
     const findByUsernameRequest = Validation.validate(
-      PostValidation.FINDBYUSERNAME,
+      PostValidation.FIND_BY_USERNAME,
       request,
     );
 
@@ -112,6 +113,42 @@ export class PostService {
       },
       take: findByUsernameRequest.size,
       skip: (findByUsernameRequest.page - 1) * findByUsernameRequest.size,
+    });
+
+    return posts.map((post) => toPostResponse(post));
+  }
+
+  async getOrSearchPosts(
+    request: GetOrSearchPostsRequest,
+  ): Promise<PostResponse[]> {
+    const getOrSearchRequest = Validation.validate(
+      PostValidation.GET_OR_SEARCH_POSTS,
+      request,
+    );
+
+    let filter = {};
+
+    if (getOrSearchRequest.search) {
+      filter = {
+        OR: [
+          {
+            title: {
+              contains: getOrSearchRequest.search,
+            },
+          },
+          {
+            content: {
+              contains: getOrSearchRequest.search,
+            },
+          },
+        ],
+      };
+    }
+
+    const posts = await prisma.post.findMany({
+      where: filter,
+      take: getOrSearchRequest.size,
+      skip: (getOrSearchRequest.page - 1) * getOrSearchRequest.size,
     });
 
     return posts.map((post) => toPostResponse(post));

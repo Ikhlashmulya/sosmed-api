@@ -303,3 +303,57 @@ describe("GET /api/users/:username/posts", () => {
     logger.debug(`result json : ${JSON.stringify(responseBody)}`);
   });
 });
+
+describe("GET /api/posts", () => {
+  beforeEach(async () => {
+    await UserTest.create();
+    await PostTest.createManyPost();
+  });
+
+  afterEach(async () => {
+    await PostTest.deleteAll();
+    await UserTest.delete();
+  });
+
+  it("should successfully get posts", async () => {
+    const token = await UserTest.getToken();
+
+    const result = await app.request(`/api/posts`, {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "Application/Json",
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+
+    expect(result.status).toBe(200);
+
+    const responseBody = await result.json();
+    expect(responseBody.data).toBeDefined();
+    expect(responseBody.paging.size).toBe(10);
+    expect(responseBody.paging.page).toBe(1);
+
+    logger.debug(`result json : ${JSON.stringify(responseBody)}`);
+  });
+
+  it("should successfully search posts", async () => {
+    const token = await UserTest.getToken();
+
+    const result = await app.request(`/api/posts?search=apa`, {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "Application/Json",
+        Authorization: `Bearer ${token}`,
+      }),
+    });
+
+    expect(result.status).toBe(200);
+
+    const responseBody = await result.json();
+    expect(responseBody.data).toHaveLength(1);
+    expect(responseBody.paging.size).toBe(10);
+    expect(responseBody.paging.page).toBe(1);
+
+    logger.debug(`result json : ${JSON.stringify(responseBody)}`);
+  });
+});
