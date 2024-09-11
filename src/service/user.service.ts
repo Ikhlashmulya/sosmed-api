@@ -12,6 +12,7 @@ import { HTTPException } from "hono/http-exception";
 import { compare, hash } from "bcrypt";
 import { sign } from "hono/jwt";
 import { prisma } from "../application/prisma";
+import { Config } from "../application/config";
 
 export class UserService {
   async register(request: RegisterUserRequest): Promise<UserResponse> {
@@ -62,7 +63,7 @@ export class UserService {
 
     userResponse.token = await sign(
       { exp: Math.floor(Date.now() / 1000) + 60 * 5, sub: user },
-      "secretKey",
+      Config.get("JWT_SECRET"),
     );
 
     return userResponse;

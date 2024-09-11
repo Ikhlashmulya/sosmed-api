@@ -3,6 +3,7 @@ import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { verify } from "hono/jwt";
 import { logger } from "../application/winston";
+import { Config } from "../application/config";
 
 export const authMiddleware = createMiddleware<{ Variables: { user: User } }>(
   async (c, next) => {
@@ -19,7 +20,10 @@ export const authMiddleware = createMiddleware<{ Variables: { user: User } }>(
     }
 
     try {
-      const decodedToken = await verify(bearerToken[1], "secretKey");
+      const decodedToken = await verify(
+        bearerToken[1],
+        Config.get("JWT_SECRET"),
+      );
       logger.debug(`sub from token : ${JSON.stringify(decodedToken.sub)}`);
       c.set("user", decodedToken.sub as User);
     } catch (e) {
