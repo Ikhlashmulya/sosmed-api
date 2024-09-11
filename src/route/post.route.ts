@@ -4,15 +4,17 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { HonoENV } from "../application/hono";
 import {
   CreatePostRequest,
+  FindPostByUsernameRequest,
   GetOrSearchPostsRequest,
   UpdatePostRequest,
 } from "../model/post.model";
 import { logger } from "../application/winston";
 
-export const createPostRoutes = (postService: PostService) => {
+export const createPostRoutes = () => {
   const postRoutes = new Hono<HonoENV>();
+  const postService = new PostService();
 
-  postRoutes.post("/", authMiddleware, async (c) => {
+  postRoutes.post("/posts", authMiddleware, async (c) => {
     const user = c.get("user");
 
     const request = await c.req.json<CreatePostRequest>();
@@ -27,7 +29,7 @@ export const createPostRoutes = (postService: PostService) => {
     });
   });
 
-  postRoutes.put("/:postId", authMiddleware, async (c) => {
+  postRoutes.put("/posts/:postId", authMiddleware, async (c) => {
     const user = c.get("user");
     const postId = c.req.param("postId");
 
@@ -41,7 +43,7 @@ export const createPostRoutes = (postService: PostService) => {
     });
   });
 
-  postRoutes.get("/:postId", authMiddleware, async (c) => {
+  postRoutes.get("/posts/:postId", authMiddleware, async (c) => {
     const postId = Number(c.req.param("postId"));
 
     const result = await postService.getById(postId);
@@ -51,7 +53,7 @@ export const createPostRoutes = (postService: PostService) => {
     });
   });
 
-  postRoutes.delete("/:postId", authMiddleware, async (c) => {
+  postRoutes.delete("/posts/:postId", authMiddleware, async (c) => {
     const user = c.get("user");
     const postId = Number(c.req.param("postId"));
 
@@ -62,7 +64,7 @@ export const createPostRoutes = (postService: PostService) => {
     });
   });
 
-  postRoutes.get("/", authMiddleware, async (c) => {
+  postRoutes.get("/posts", authMiddleware, async (c) => {
     const { search, page, size } = c.req.query();
 
     const request: GetOrSearchPostsRequest = {
@@ -72,6 +74,27 @@ export const createPostRoutes = (postService: PostService) => {
     };
 
     const result = await postService.getOrSearchPosts(request);
+
+    return c.json({
+      data: result,
+      paging: {
+        page: request.page,
+        size: request.size,
+      },
+    });
+  });
+
+  postRoutes.get("/users/:username/posts", authMiddleware, async (c) => {
+    const username = c.req.param("username");
+    const { size, page } = c.req.query();
+
+    const request: FindPostByUsernameRequest = {
+      username: username,
+      size: !size ? 10 : Number(size),
+      page: !page ? 1 : Number(page),
+    };
+
+    const result = await postService.findPostByUsername(request);
 
     return c.json({
       data: result,
