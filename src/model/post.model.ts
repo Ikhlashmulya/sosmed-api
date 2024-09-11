@@ -1,4 +1,5 @@
 import { Post } from "@prisma/client";
+import { Paging } from "./paging.model";
 
 export type CreatePostRequest = {
   title: string;
@@ -22,15 +23,11 @@ export type PostResponse = {
 
 export type FindPostByUsernameRequest = {
   username: string;
-  size: number;
-  page: number;
-};
+} & Paging;
 
 export type GetOrSearchPostsRequest = {
   search?: string;
-  page: number;
-  size: number;
-};
+} & Paging;
 
 export function toPostResponse(post: Post): PostResponse {
   return {
