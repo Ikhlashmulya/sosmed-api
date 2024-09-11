@@ -1,7 +1,7 @@
 import { hash } from "bcrypt";
 import { sign } from "hono/jwt";
 import { prisma } from "../src/application/prisma";
-import { Post } from "@prisma/client";
+import { Comment, Post } from "@prisma/client";
 
 export class UserTest {
   static async delete() {
@@ -73,6 +73,58 @@ export class PostTest {
           userUsername: "test",
         },
       ],
+    });
+  }
+}
+
+export class CommentTest {
+  static async deleteAll(): Promise<void> {
+    await prisma.comment.deleteMany({});
+  }
+
+  static async createMany(postId: number): Promise<void> {
+    await prisma.comment.createMany({
+      data: [
+        {
+          content: "comment 1",
+          postId: postId,
+          userUsername: "test",
+        },
+
+        {
+          content: "comment 2",
+          postId: postId,
+          userUsername: "test",
+        },
+
+        {
+          content: "comment 3",
+          postId: postId,
+          userUsername: "test",
+        },
+
+        {
+          content: "comment 4",
+          postId: postId,
+          userUsername: "test",
+        },
+
+        {
+          content: "comment 5",
+          postId: postId,
+          userUsername: "test",
+        },
+      ],
+    });
+  }
+
+  static async create(postId: number): Promise<Comment> {
+    return await prisma.comment.create({
+      data: {
+        content: "test comment",
+        postId: postId,
+        userUsername: "test",
+      },
     });
   }
 }

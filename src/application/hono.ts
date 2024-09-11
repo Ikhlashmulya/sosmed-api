@@ -4,6 +4,7 @@ import { HTTPException } from "hono/http-exception";
 import { ZodError } from "zod";
 import { User } from "@prisma/client";
 import { createPostRoutes } from "../route/post.route";
+import { createCommentRoutes } from "../route/comment.route";
 
 export type HonoENV = {
   Variables: {
@@ -14,6 +15,13 @@ export type HonoENV = {
 export const app = new Hono();
 app.route("/api", createUserRoutes());
 app.route("/api", createPostRoutes());
+app.route("/api", createCommentRoutes());
+
+app.all("/", (c) => {
+  return c.html(
+    `<h1>API docs at <a href="https://github.com/Ikhlashmulya/sosmed-api/tree/main/docs">github</a></h1>`,
+  );
+});
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
